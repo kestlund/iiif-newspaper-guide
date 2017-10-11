@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IIIF Newspaper Implementation Notes</title>
+</head>
+
+<body>
+<h1>IIIF Newspaper Implementation Notes</h1>
+<p>These implementation notes are provided by the <a href="http://iiif.io/community/groups/newspapers/">IIIF newspapers community group</a>. See also: <a href="newspaper-model.html">Newspaper structure mapped to IIIF</a>.</p>
+<p>When implementing IIIF with newspaper content, there are a few implementation patterns that are particularly helpful for  newspaper support, and these notes  detail some of them to ensure consistency.</p>
+<p>These notes are in no way extending the IIIF standard and if inconsistencies are found please report to <a href="mailto:iiif-discuss@googlegroups.com">iiif-discuss@googlegroups.com</a>.</p>
+<h2>Implementation Use Cases</h2>
+<ol>
+  <li>How do I translate a newspaper structure  to IIIF? Check out the <a href="newspaper-model.html">Newspaper structure mapped to IIIF</a></li>
+  <li>Want to share your images? Implement <a href="http://iiif.io/api/image/2.1/">IIIF Image API</a></li>
+<li>Want to support display, navigate, and define relationships? Implement <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
+<li>Want to support browse through newspapers by date? Use the <strong>navDate</strong> element in the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
+<li>Want to provide relationship to text files of OCR, ALTO, or other associated text? Use the <strong>seeAlso</strong> element in the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
+<li>Want to provide viewer-available OCR text associated with newspaper images? Use <a href="https://www.w3.org/TR/annotation-model/">Web Annotations</a> within the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
+<li>Want to support articles, illustrations, and other sections of a page? Use <strong>ranges</strong> from the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
+<li>Want to search through text and annotations associated with newspaper imges? Implement the <a href="http://iiif.io/api/search/1.0/">IIIF Search API</a> (Note: some IIIF viewers and software may have an annotation server and this option ready-to-go.)</li>
+<li>Need to restrict access to images, versions, or resolutions? Implement <a href="http://iiif.io/api/auth/1.0/">IIIF Authentication API</a></li>
+</ol>
+<h2>Guide for Newspapers within the IIIF Presentation API</h2>
+<p>This scope of this guide provides examples for newspaper implementations in the presentation API to especially enhance access to  newspaper content, representing implementation use cases 4-7. While the <a href="http://iiif.io/api/image/2.1/">IIIF Image API</a> is essential for transfer of image pixels, the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a> is also especially important for newspapers specifically because it provides the ability <strong>to indicate structure and viewing order</strong> for complex objects and <strong>supports an annotation layer that is integral for OCR text</strong>. </p>
+<p>The guidance below provides an on-ramp for IIIF compatibility for newspapers, highlighting various levels of compliance with the IIIF spec. Each suggestion provides: a use-case, known viewer support (<a href="http://projectmirador.org/">Mirador</a> and <a href="https://universalviewer.io/">Universal Viewer</a> were tested;  other IIIF viewers may also provide solutions), solutions to the use case, notes, and examples.</p>
+<h3>NavDate for Issue Date and Edition Order</h3>
+<p><strong>Use case</strong>: I want to browse Newspapers published between certain dates. I want to browse through issues of a Newspaper in chronological order.</p>
+<p><strong>Viewer support</strong>: Issue date is supported in the Universal Viewer (UV) and allows you to navigate issues by date.
+</p>
+<p><strong>Solution</strong>: Newspapers should provide a navDate in the issue level manifest.  See <a href="http://iiif.io/api/presentation/2.1/#navdate">navDate</a> from IIIF specification and example below: </p>
+<pre><code>{
+"@context": "http://iiif.io/api/presentation/2/context.json",
+   "@id": "http://dams.llgc.org.uk/iiif/newspaper/issue/3100021/manifest.json",
+   "@type": "sc:Manifest",
+   "label": "Potter's electric news (1859-01-05)",
+   "navDate": "1859-01-05T00:00:00Z", 
+   "metadata": [
+…
+</code></pre>
+<p >IIIF Collections for Newspaper Titles may also have navDates in the manifest section for example:</p>
+<pre><code>
+    {
+     "@id": "http://dams.llgc.org.uk/iiif/newspaper/issue/3100021/manifest.json",
+     "@type": "sc:Manifest",
+     "navDate": "1859-01-05T00:00:00Z",
+     "label": "Potter's electric news (1859-01-05)"
+},
+</code></pre>
+<p >from <a href="http://dams.llgc.org.uk/iiif/newspapers/3100020.json">http://dams.llgc.org.uk/iiif/newspapers/3100020.json</a>.</p>
+<strong>Note about Editions: </strong>For editions, a temporal value can be inserted to enforce navigation order. <strong>navDate</strong> is, by definition, not an assertion of when an issue was published, therefore, you can use a 06:00 timestamp for a morning edition and a 17:00 for an evening editon to provide browse order.<strong><br>
+</strong>
+<p><strong>Example Implementation</strong>: </p>
+<ul>
+  <li>
+    Issue / IIIF Manifest: 
+    <ul>
+      <li><a href="http://dams.llgc.org.uk/iiif/newspaper/issue/3100021/manifest.json">http://dams.llgc.org.uk/iiif/newspaper/issue/3100021/manifest.json</a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    Newspaper Title / IIIF Collection: 
+    <ul>
+      <li><a href="http://dams.llgc.org.uk/iiif/newspapers/3100020.json">http://dams.llgc.org.uk/iiif/newspapers/3100020.json</a>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p><img src="images/national-lib-wales-calendarview.png" width="350" alt="Welch Newspapers Online title calendar browse view"/><img src="images/national-lib-wales-UV.png" width="350" alt="Welch Newspapers Online issue view with date and next issue highlighted"/></p>
+
+<h3>Linking to Text</h3>
+<p><strong>Use case:</strong> I would like to be able to link to OCR for a Newspaper page. The OCR may contain information not contained in Annotations (e.g. OCR confidence in ALTO).</p>
+<p><strong>Viewer Support:</strong> Currently unsupported in viewers although the <strong>seeAlso</strong> is meant as a &ldquo;A link to a machine readable document&rdquo; not for display to a user. If you would like to let users download OCR files you should use the rendering field: <a href="http://iiif.io/api/presentation/2.1/#rendering">http://iiif.io/api/presentation/2.1/#rendering</a>.</p>
+<p><strong>Recommendation:</strong> It is possible to link OCR documents to a IIIF canvas by adding a <strong>seeAlso</strong> field see <a href="http://iiif.io/api/presentation/2.1/#canvas">canvas</a> and <a href="http://iiif.io/api/presentation/2.1/#seealso">seeAlso</a> from the IIIF specification. Examples for ALTO, hOCR, and plain text:</p>
+<h4>ALTO:</h4>
+<pre><code>seeAlso: {
+     @id: "http://wellcomelibrary.org/service/alto/b19956435/0?image=0",
+     format: "application/xml",
+     profile: "http://www.loc.gov/standards/alto/",
+     label: "ALTO XML"
+},
+</code>
+</pre>
+<p><strong>Example implementation:  </strong>To be added; 2017-10-10.</p>
+
+<h4>hOCR:</h4>
+<pre><code>seeAlso": [ {
+    "@id": "https://ocr.lib.ncsu.edu/ocr/nu/nubian-message-2003-04-01_0002/nubian-message-2003-04-01_0002.hocr",
+    "format": "text/vnd.hocr+html",
+    "profile": "https://github.com/kba/hocr-spec/blob/master/hocr-spec.md",
+    "label": "hOCR"
+  },
+</code></pre>
+
+<p><strong>Example implementation: &nbsp;</strong></p>
+<ul>
+  <li >
+    <p ><a href="https://d.lib.ncsu.edu/collections/catalog/nubian-message-1995-04-01/manifest">https://d.lib.ncsu.edu/collections/catalog/nubian-message-1995-04-01/manifest</a></p>
+  </li>
+</ul>
+<h4>Text</h4>
+<pre><code> seeAlso": [ {
+    "@id": "https://ocr.lib.ncsu.edu/ocr/nu/nubian-message-2003-04-01_0002/nubian-message-2003-04-01_0002.txt",
+    "format": "text/plain",
+    "label": "plain text OCR"
+ },
+</code></pre>
+
+<p><strong>Example implementation: </strong></p>
+<ul>
+  <li >
+    <p ><a href="https://d.lib.ncsu.edu/collections/catalog/nubian-message-1995-04-01/manifest">https://d.lib.ncsu.edu/collections/catalog/nubian-message-1995-04-01/manifest</a></p>
+  </li>
+</ul>
+<h3>Providing Text as Annotations</h3>
+<p><strong>Use case: </strong>I want text associated with areas of an image, including OCR and transcription.</p>
+<p><strong>Viewer support: </strong>Universal Viewer and Miradaor</p>
+<p><strong>Solution:</strong> Use <a href="https://www.w3.org/TR/annotation-model/">W3C Web Annotations</a> with annotation lists and annotations.</p>
+<pre><code>{
+            "@context":"http://iiif.io/api/presentation/2/context.json",
+            "@id":"http://dams.llgc.org.uk/iiif/4342443/annotation/list/ART8.json",
+            "@type":"sc:AnnotationList",
+            "resources":[
+        
+                    {
+                    "@id":"http://dams.llgc.org.uk/iiif/4342443/annotation/2003468828629",
+                        "@type":"oa:Annotation",
+                        "motivation":"sc:painting",
+                        "resource": 
+                        {
+                            "@type":"cnt:ContentAsText",
+                            "format":"text/plain",
+                            
+                    "chars":"SIEraOROLlOIOAt,"
+                        },
+                        "on":"http://dams.llgc.org.uk/iiif/4342439/canvas/4342443#xywh=2003,4688,286,29"
+                    },
+                    {
+                    "@id":"http://dams.llgc.org.uk/iiif/4342443/annotation/2308468424928",
+                        "@type":"oa:Annotation",
+                        "motivation":"sc:painting",
+                        "resource": 
+                        {
+                            "@type":"cnt:ContentAsText",
+                            "format":"text/plain",
+                            
+                    "chars":"OBSERVATIONS,"
+                        },
+                          "on":"http://dams.llgc.org.uk/iiif/4342439/canvas/4342443#xywh=2308,4684,249,28"
+                    },
+</code></pre>
+<p><strong>Example implementation:</strong> To be added after transition from Open Annotations to Web Annotations is confirmed.</p>
+<p><strong>Resources to convert ALTO to annotations: </strong>To be added soon; 2017-10-10.</p>
+<h4>Giving access to OCR text as paragraphs, lines and words</h4>
+<p ><strong>Use case:</strong> I would like to share multiple version of the same annotation list with different specificities so for example I might have:</p>
+<ul>
+  <li >
+    <p >a word level annotation list for harvesting by Europeana</p>
+  </li>
+  <li >
+    <p >a line level annotation list for use in Mirador</p>
+  </li>
+  <li >
+    <p >a paragraph annotation list for OCR correction.</p>
+  </li>
+</ul>
+<p>I would like to be able to link to these options to allow the client to decide which ones they want to use.
+</p>
+<p><strong>Solution:</strong> TBD; active discussions in Text Granularity Working Group. See also: <a href="https://github.com/IIIF/iiif.io/issues/764">https://github.com/IIIF/iiif.io/issues/764</a>.</p>
+<h3>Encoding Newspaper Articles</h3>
+<p><strong>Use case:</strong> I would like to display the articles contained in a newspaper page including any OCR text associated with that article. </p>
+<p><strong>Viewer Support:</strong> The UV and Mirador display the articles but if you click on the headings you are not taken to the article. </p>
+<p><strong>Solution:</strong> Articles should be modeled by adding a <a href="http://iiif.io/api/presentation/2.1/#range">range</a> to the issue manifest. The canvases list should link to areas of the canvas that are part of this article. The contentLayer should contain a link to the annotationLayer for the article. More about ranges: <a href="https://github.com/IIIF/iiif.io/issues/645">https://github.com/IIIF/iiif.io/issues/645</a></p>
+<pre><code>"structures": [
+{ 
+    "@id": "http://dams.llgc.org.uk/iiif/3100021/article/ART1",
+    "@type": "sc:Range",
+    "label": "Advertising",
+    "canvases": [
+        "http://dams.llgc.org.uk/iiif/3100021/canvas/3100022#xywh=588,2844,9951,20412"
+    ],
+    "contentLayer": [
+    {
+        "@id": "http://dams.llgc.org.uk/iiif/3100021/annotation/layer/ART1.json",
+        "@type": "sc:Layer",
+        "label": "OCR Article Text"
+    }]
+},
+</code><br>
+</pre>
+<p>Canvases can link to the annotations that are contained in page by:</p>
+<pre><code>"otherContent": [
+{
+     "@id": "http://dams.llgc.org.uk/iiif/3100022/annotation/list/ART1.json",
+     "@type": "sc:AnnotationList",
+     "label": "Advertising",
+     "within": {
+          "@id": "http://dams.llgc.org.uk/iiif/3100021/annotation/layer/ART1.json",
+          "@type": "sc:Layer",
+          "label": "OCR Article Text"
+     }
+},</code>
+<br>
+</pre>
+<p ><strong>Example Implementation:</strong></p>
+<ul>
+  <li >
+    <p >Issue / IIIF Manifest: <a href="http://dams.llgc.org.uk/iiif/newspaper/issue/3100021/manifest.json">http://dams.llgc.org.uk/iiif/newspaper/issue/3100021/manifest.json</a></p>
+  </li>
+</ul>
+<h4>Linking to article text that crosses pages or appears in different sections on a single page</h4>
+<p><strong>Use case: </strong>Some of my newspaper articles span across pages and I would like to reflect this using IIIF. </p>
+<p><strong>Viewer Support: </strong>No implementation identified to test.<br>
+</p>
+<p ><strong>Solution:</strong> Use a Range within your structures and for the canvases property list out each of the fragments of the canvases that belong to the same article. The following is an example  if the article crossed two pages:</p>
+<pre><code>"structures": [
+{ 
+    "@id": "http://dams.llgc.org.uk/iiif/3100021/article/ART1",
+    "@type": "sc:Range",
+    "label": "Letters to the Editor",
+    "canvases": [
+        "http://dams.llgc.org.uk/iiif/3100021/canvas/3100022#xywh=588,2844,9951,20412",
+        "http://dams.llgc.org.uk/iiif/3100021/canvas/page2#xywh=0,0,100,100"
+    ],
+    "contentLayer": [
+    {
+        "@id": "http://dams.llgc.org.uk/iiif/3100021/annotation/layer/ART1.json",
+        "@type": "sc:Layer",
+        "label": "OCR Article Text"
+    }]</code></pre>
+<p ><strong>Example Implementation: </strong></p>
+<ul>
+  <li >
+    <p >No specific implementation identifed as of 2017-10-10.</p>
+  </li>
+</ul>
+
+<br>
+<p>&nbsp;</p>
+</body>
+</html>
