@@ -19,8 +19,8 @@
 <li>Want to provide relationship to text files of OCR, ALTO, or other associated text? Use the <strong>seeAlso</strong> element in the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
 <li>Want to provide viewer-available OCR text associated with newspaper images? Use <a href="https://www.w3.org/TR/annotation-model/">Web Annotations</a> within the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
 <li>Want to support articles, illustrations, and other sections of a page? Use <strong>ranges</strong> from the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a></li>
-<li>Want to search through text and annotations associated with newspaper imges? Implement the <a href="http://iiif.io/api/search/1.0/">IIIF Search API</a> (Note: some IIIF viewers and software may have an annotation server and this option ready-to-go.)</li>
-<li>Need to restrict access to images, versions, or resolutions? Implement <a href="http://iiif.io/api/auth/1.0/">IIIF Authentication API</a></li>
+<li>Want to search through text and annotations associated with newspaper images? Implement the <a href="http://iiif.io/api/search/1.0/">IIIF Search API</a> (Note: some IIIF viewers and software may have an annotation server and this option ready-to-go.)</li>
+<li>Need to restrict access to images, versions, or resolutions? Implement <a href="http://iiif.io/api/auth/1.0/">IIIF Authentication API</a> with your local authentication service.
 </ol>
 <h2>Guide for Newspapers within the IIIF Presentation API</h2>
 <p>This scope of this guide provides examples for newspaper implementations in the presentation API to especially enhance access to  newspaper content, representing implementation use cases 4-7. While the <a href="http://iiif.io/api/image/2.1/">IIIF Image API</a> is essential for transfer of image pixels, the <a href="http://iiif.io/api/presentation/2.1/">IIIF Presentation API</a> is also especially important for newspapers specifically because it provides the ability <strong>to indicate structure and viewing order</strong> for complex objects and <strong>supports an annotation layer that is integral for OCR text</strong>. </p>
@@ -39,7 +39,7 @@
    "metadata": [
 …
 </code></pre>
-<p >IIIF Collections for Newspaper Titles may also have navDates in the manifest section for example:</p>
+<p >IIIF Collections for Newspaper Titles may also have a <strong>navDate</strong> in the manifest section for example:</p>
 <pre><code>
     {
      "@id": "http://dams.llgc.org.uk/iiif/newspaper/issue/3100021/manifest.json",
@@ -49,7 +49,7 @@
 },
 </code></pre>
 <p >from <a href="http://dams.llgc.org.uk/iiif/newspapers/3100020.json">http://dams.llgc.org.uk/iiif/newspapers/3100020.json</a>.</p>
-<strong>Note about Editions: </strong>For editions, a temporal value can be inserted to enforce navigation order. <strong>navDate</strong> is, by definition, not an assertion of when an issue was published, therefore, you can use a 06:00 timestamp for a morning edition and a 17:00 for an evening editon to provide browse order.<strong><br>
+<strong>Note about Editions: </strong>For editions, a temporal value can be inserted to enforce navigation order. <strong>navDate</strong> is, by definition, not an assertion of when an issue was published, therefore, you can use a 06:00 timestamp for a morning edition and a 17:00 for an evening edition to provide browse order.<strong><br>
 </strong>
 <p><strong>Example Implementation</strong>: </p>
 <ul>
@@ -117,7 +117,7 @@
 <h3>Providing Text as Annotations</h3>
 <p><strong>Use case: </strong>I want text associated with areas of an image, including OCR and transcription.</p>
 <p><strong>Viewer support: </strong>Universal Viewer and Miradaor</p>
-<p><strong>Solution:</strong> Use <a href="https://www.w3.org/TR/annotation-model/">W3C Web Annotations</a> with annotation lists and annotations.</p>
+<p><strong>Solution:</strong> Use <a href="https://www.w3.org/TR/annotation-model/">W3C Web Annotations</a> with annotation lists and annotations. Note: IIIF is transitioning from the recommendation to use Open Annotations, which were superseded by Web Annotations in Presentation API 3.0. The following example is a word-level open annotation:</p>
 <pre><code>{
             "@context":"http://iiif.io/api/presentation/2/context.json",
             "@id":"http://dams.llgc.org.uk/iiif/4342443/annotation/list/ART8.json",
@@ -233,7 +233,7 @@
 <p ><strong>Example Implementation: </strong></p>
 <ul>
   <li >
-    <p >No specific implementation identifed as of 2017-10-10.</p>
+    <p >No specific implementation identified as of 2017-10-10.</p>
   </li>
 </ul>
 
